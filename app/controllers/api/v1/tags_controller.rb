@@ -6,9 +6,7 @@ class API::V1::TagsController < API::V1Controller
   def create
     tag = Tag.new
 
-    tag.update_attributes(safe_params)
-
-    render json: tag
+    save_record(tag)
   end
 
   def show
@@ -18,9 +16,7 @@ class API::V1::TagsController < API::V1Controller
   def update
     tag = Tag.find(params[:id])
 
-    tag.update_attributes(safe_params)
-
-    render json: tag
+    save_record(tag)
   end
 
   def destroy
@@ -30,6 +26,14 @@ class API::V1::TagsController < API::V1Controller
   end
 
   private
+
+  def save_record(tag)
+    if tag.update_attributes(safe_params)
+      render json: tag
+    else
+      render json: { errors: tag.errors.full_messages }, status: :bad_request
+    end
+  end
 
   def safe_params
     attribute_params.permit(:title)

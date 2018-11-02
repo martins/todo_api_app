@@ -7,8 +7,6 @@ class API::V1::TasksController < API::V1Controller
     task = Task.new
 
     save_record(task)
-
-    render json: task
   end
 
   def show
@@ -19,8 +17,6 @@ class API::V1::TasksController < API::V1Controller
     task = Task.find(params[:id])
 
     save_record(task)
-
-    render json: task
   end
 
   def destroy
@@ -38,6 +34,10 @@ class API::V1::TasksController < API::V1Controller
       tags = tag_titles.map { |title| Tag.where(title: title).first_or_create! if title.present? }
       task.update_attributes!(safe_params.merge(tags: tags))
     end
+
+    render json: task
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+    render json: { errors: [e.message] }, status: :bad_request
   end
 
   def safe_params
