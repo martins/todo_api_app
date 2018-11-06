@@ -16,6 +16,23 @@ describe 'Tags' do
       tag_attributes = %({"title":"Foobar"})
       expect(response.body).to be_json_eql(tag_attributes).at_path('data/0/attributes')
     end
+
+    context 'with autocomplete params' do
+      it 'returns filtered list' do
+        Tag.create!(title: 'Testing')
+        Tag.create!(title: 'Foobar')
+        Tag.create!(title: 'oobeeeer')
+        Tag.create!(title: 'Someoooob')
+        Tag.create!(title: 'Sober')
+
+        get '/api/v1/tags', params: { q: 'oob' }
+
+        expect(response.body).to have_json_size(3).at_path('data')
+        expect(response.body).to be_json_eql(%({"title":"Foobar"})).at_path('data/0/attributes')
+        expect(response.body).to be_json_eql(%({"title":"oobeeeer"})).at_path('data/1/attributes')
+        expect(response.body).to be_json_eql(%({"title":"Someoooob"})).at_path('data/2/attributes')
+      end
+    end
   end
 
   describe '#show' do

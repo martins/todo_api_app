@@ -1,6 +1,12 @@
 class API::V1::TagsController < API::V1Controller
   def index
-    render json: Tag.order(:id)
+    scoped = Tag.order(:id)
+
+    if params[:q].present?
+      scoped = Tag.where(Tag.arel_table[:title].matches("%#{params[:q]}%"))
+    end
+
+    render json: scoped
   end
 
   def create
