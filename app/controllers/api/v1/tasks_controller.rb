@@ -1,6 +1,6 @@
 class API::V1::TasksController < API::V1Controller
   def index
-    render json: Task.all
+    render json: Task.includes(:tags).order(:id)
   end
 
   def create

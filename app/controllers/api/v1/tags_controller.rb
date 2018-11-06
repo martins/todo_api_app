@@ -1,6 +1,6 @@
 class API::V1::TagsController < API::V1Controller
   def index
-    render json: Tag.all
+    render json: Tag.order(:id)
   end
 
   def create
