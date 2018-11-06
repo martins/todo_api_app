@@ -19,10 +19,9 @@ ActiveRecord::Schema.define(version: 2018_10_31_195058) do
   end
 
   create_table "tags_tasks", force: :cascade do |t|
-    t.integer "tag_id", null: false
     t.integer "task_id", null: false
-    t.index ["tag_id"], name: "index_tags_tasks_on_tag_id"
-    t.index ["task_id"], name: "index_tags_tasks_on_task_id"
+    t.integer "tag_id", null: false
+    t.index ["task_id", "tag_id"], name: "index_tags_tasks_on_task_id_and_tag_id", unique: true
   end
 
   create_table "tasks", force: :cascade do |t|

@@ -1,5 +1,6 @@
 class Task < ApplicationRecord
-  has_and_belongs_to_many :tags
+  has_many :tags_tasks
+  has_many :tags, through: :tags_tasks
 
   validates :title, presence: true
 end

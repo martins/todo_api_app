@@ -28,19 +28,12 @@ class API::V1::TasksController < API::V1Controller
   private
 
   def save_record(task)
-    tag_titles = Array.wrap(attribute_params.permit(tags: [])[:tags])
+    result = API::V1::TaskUpdater.new(task, attribute_params).call
 
-    ActiveRecord::Base.transaction do
-      tags = tag_titles.map { |title| Tag.where(title: title).first_or_create! if title.present? }
-      task.update_attributes!(safe_params.merge(tags: tags))
+    if result[:success]
+      render json: task
+    else
+      render json: { errors: result[:errors] }, status: :bad_request
     end
-
-    render json: task
-  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
-    render json: { errors: [e.message] }, status: :bad_request
-  end
-
-  def safe_params
-    attribute_params.permit(:title)
   end
 end
